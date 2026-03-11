@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upload File</title>
+
+<style>
+body {
+    background-color: #000000;
+    color: #49136c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: sans-serif;
+    margin: 0;
+    transition: background-color 0.2s ease;
+}
+
+body.dragging {
+    background-color: #050005;
+}
+
+.card {
+    background-color: #000000;
+    padding: 30px 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(73,19,108,0.5);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo {
+    font-family: "DejaVu Sans Mono","Courier New",monospace;
+    font-size: clamp(10px,1.1vw,14px);
+    line-height: 1.1;
+    white-space: pre;
+    color: #49136c;
+    margin-bottom: 20px;
+    user-select: none;
+    animation: glowPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+    from {
+        text-shadow:
+            0 0 5px #49136c,
+            0 0 10px #49136c;
+    }
+    to {
+        text-shadow:
+            0 0 10px #49136c,
+            0 0 20px #49136c,
+            0 0 35px rgba(73,19,108,0.9);
+    }
+}
+
+h2,h3 {
+    margin: 15px 0;
+}
+
+form {
+    margin: 20px 0;
+    width: 100%;
+}
+
+.drop-area {
+    border: 2px dashed #49136c;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.drop-area.hover {
+    background-color: rgba(73,19,108,0.15);
+    border-color: #6a34a1;
+    box-shadow:
+        0 0 10px #49136c,
+        0 0 20px rgba(73,19,108,0.6);
+}
+
+input[type="file"] {
+    display: none;
+}
+
+iframe {
+    border: 1px solid #49136c;
+    border-radius: 8px;
+    width: 300px;
+    height: 50px;
+    background-color: #000000;
+    color: #49136c;
+    overflow: auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<pre class="logo">
+ ▄▄▄██▀▀▀▄▄▄       ▒█████   ██░ ██ 
+   ▒██  ▒████▄    ▒██▒  ██▒▓██░ ██▒
+   ░██  ▒██  ▀█▄  ▒██░  ██▒▒██▀▀██░
+▓██▄██▓ ░██▄▄▄▄██ ▒██   ██░░▓█ ░██ 
+ ▓███▒   ▓█   ▓██▒░ ████▓▒░░▓█▒░██▓
+ ▒▓▒▒░   ▒▒   ▓▒█░░ ▒░▒░▒░  ▒ ░░▒░▒
+ ▒ ░▒░    ▒   ▒▒ ░  ░ ▒ ▒░  ▒ ░▒░ ░
+ ░ ░ ░    ░   ▒   ░ ░ ░ ▒   ░  ░░ ░
+ ░   ░        ░  ░    ░ ░   ░  ░  ░
+</pre>
+
+<h2>Upload File</h2>
+
+<form id="uploadForm" action="http://127.0.0.1:8000" method="post" enctype="multipart/form-data" target="result">
+
+<div class="drop-area" id="dropArea">
+Drag & Drop File Here<br>
+or Click to Select
+</div>
+
+<input type="file" name="file" id="fileInput" required>
+
+</form>
+
+<h3>URL</h3>
+
+<iframe name="result"></iframe>
+
+</div>
+
+<script>
+
+const dropArea = document.getElementById("dropArea")
+const fileInput = document.getElementById("fileInput")
+const uploadForm = document.getElementById("uploadForm")
+
+document.addEventListener("dragover",(e)=>{
+    e.preventDefault()
+    document.body.classList.add("dragging")
+})
+
+document.addEventListener("dragleave",()=>{
+    document.body.classList.remove("dragging")
+})
+
+document.addEventListener("drop",()=>{
+    document.body.classList.remove("dragging")
+})
+
+dropArea.addEventListener("dragover",(e)=>{
+    e.preventDefault()
+    dropArea.classList.add("hover")
+})
+
+dropArea.addEventListener("dragleave",()=>{
+    dropArea.classList.remove("hover")
+})
+
+dropArea.addEventListener("drop",(e)=>{
+    e.preventDefault()
+    dropArea.classList.remove("hover")
+
+    const files = e.dataTransfer.files
+
+    if(files.length){
+        fileInput.files = files
+        uploadForm.submit()
+    }
+})
+
+dropArea.addEventListener("click",()=>{
+    fileInput.click()
+})
+
+fileInput.addEventListener("change",()=>{
+    if(fileInput.files.length){
+        uploadForm.submit()
+    }
+})
+
+</script>
+
+</body>
+</html>
+
